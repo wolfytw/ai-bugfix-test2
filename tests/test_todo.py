@@ -52,3 +52,12 @@ def test_complete_uses_display_number():
     todo.complete(1)
 
     assert [task.done for task in todo.tasks] == [True, False]
+
+
+@pytest.mark.parametrize("number", [0, 2])
+def test_complete_rejects_invalid_display_number(number):
+    todo = TodoList()
+    todo.add("A")
+
+    with pytest.raises(ValueError):
+        todo.complete(number)
