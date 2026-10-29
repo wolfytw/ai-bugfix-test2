@@ -1,0 +1,44 @@
+# 用 Template 建立的 repo 不會複製 Issue，所以由這個 workflow 自動開好練習 Issue。
+# 建立 repo 後通常會自動執行；若 Issues 分頁還是空的，到 Actions → 「建立練習 Issue」→ Run workflow。
+name: 建立練習 Issue
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/practice-issues/**'
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  create-issues:
+    # 範本 repo 本身不建 Issue，只有「用範本建立的練習 repo」才建
+    if: ${{ !github.event.repository.is_template }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 建立標籤與練習 Issue（已存在就略過）
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh label create "🟢 簡單" --color 2DA44E --force
+          gh label create "🟡 中等" --color D4A72C --force
+          gh label create "🔴 挑戰" --color CF222E --force
+          for f in .github/practice-issues/*.md; do
+            title=$(sed -n 's/^title: //p' "$f" | head -1)
+            label=$(sed -n 's/^label: //p' "$f" | head -1)
+            body=$(awk 'f>=2{print} /^---$/{f++}' "$f")
+            exists=$(gh issue list --state all --limit 100 --json title \
+                       --jq "[.[] | select(.title == \"$title\")] | length")
+            if [ "$exists" = "0" ]; then
+              gh issue create --title "$title" --label "$label" --body "$body"
+              echo "已建立：$title"
+            else
+              echo "已存在，略過：$title"
+            fi
+          done

@@ -1,0 +1,40 @@
+name: 🐞 回報 Bug
+description: 寫清楚到「別人（或 AI）不用問你就能修」
+labels: []
+body:
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重現步驟
+      description: 一步一步寫出怎麼讓問題出現，最好附上程式碼。
+      placeholder: |
+        1. todo = TodoList()
+        2. todo.add("運動")
+        3. print(todo.render())
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 預期結果
+      placeholder: 印出「1. [ ] 運動」
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 實際結果
+      placeholder: 印出……（貼上實際看到的結果或錯誤訊息）
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 驗收條件
+      description: 怎樣才算修好？用可以寫成測試的句子。
+      placeholder: |
+        - [ ] 輸入……時，結果應該是……
+        - [ ] 邊界情況（空清單、不存在的編號……）要怎麼處理
+        - [ ] 新增對應的單元測試，且所有測試通過
+    validations:
+      required: true

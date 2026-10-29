@@ -1,0 +1,19 @@
+# Copilot 雲端代理開工前會先跑這個 job，幫它準備好 Python 與 pytest，
+# 讓它改完程式能自己跑測試。job 名稱必須是 copilot-setup-steps。
+name: Copilot Setup Steps
+
+on: workflow_dispatch
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install pytest
